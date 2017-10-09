@@ -100,11 +100,17 @@ public:
 			++size_list;
 			return;
 		}
+		node *newHead = new node(data_arg);
+		newHead->next = head;
+		head = newHead;
+		++size_list;
+		/*
 		register node *tmp = head;
 		while(tmp->next)
 			tmp = tmp->next;
 		tmp->next = new node(data_arg);
 		++size_list;
+		*/
 	}
 
 
