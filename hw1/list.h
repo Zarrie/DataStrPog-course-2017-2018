@@ -17,15 +17,10 @@ private:
 		node* next;
 		T data;
 		node() : next(nullptr) {}
+		
+		explicit node(const T& data_arg) : next(nullptr), data(data_arg) {}
 
-		// should be copy cstr and operator= = deleted?
-
-		node(const T& data_arg) : next(nullptr), data(data_arg) {}
-
-		~node()
-		{
-			// /delete next/ here yields core dump
-		}
+		~node() {}
 	};
 
 	void removeNext(node *&head)
