@@ -2,10 +2,10 @@
 
 Data structures and algorithms course of FMI SU 2017/18 
 
-#  -example programs 
+  -example programs 
 
-#  -homework solutions 
+  -homework solutions 
 
-#  -and other useful stuff 
+  -and other useful stuff 
 
 can be found here
