@@ -313,6 +313,11 @@ public:
 		}
 	}
 
+	void mergeSorted(const linkedList<T>& rhs)
+	{
+		
+	}
+
 	void printAll() const
 	{
 		register node *tmp = head;
