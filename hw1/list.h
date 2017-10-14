@@ -11,6 +11,7 @@ template <typename T>
 class linkedList
 {
 private:
+	friend class linkedList_iterator;
 	class node
 	{
 	public:
@@ -52,6 +53,17 @@ private:
 		else return true;
 	}
 
+	void copy(const linkedList<T>& rhs)
+	{
+		register node* curr = rhs.head;
+		while(curr)
+		{
+			this->insert(curr->data);
+			curr = curr->next;
+		}
+		size_list = rhs.size_list;
+	}
+
 	node* head;
 	size_t size_list;
 
@@ -63,13 +75,7 @@ public:
 	{
 		head = nullptr;
 		size_list = 0;
-		register node* curr = rhs.head;
-		while(curr)
-		{
-			this->insert(curr->data);
-			curr = curr->next;
-		}
-		size_list = rhs.size_list;
+		copy(rhs);
 	}
 
 	linkedList<T>& operator=(const linkedList<T>& rhs)
@@ -81,13 +87,7 @@ public:
 				this->clear();
 				size_list = 0;
 			}
-			register node* curr = rhs.head;
-			while(curr)
-			{
-				this->insert(curr->data);
-				curr = curr->next;
-			}
-			size_list = rhs.size_list;
+			copy(rhs);
 		}
 		return *this;
 	}
@@ -100,17 +100,25 @@ public:
 			++size_list;
 			return;
 		}
-		node *newHead = new node(data_arg);
-		newHead->next = head;
-		head = newHead;
-		++size_list;
-		/*
 		register node *tmp = head;
 		while(tmp->next)
 			tmp = tmp->next;
 		tmp->next = new node(data_arg);
 		++size_list;
-		*/
+	}
+
+	void insert_front(const T& data_arg)
+	{
+		if(!head)
+		{
+			head = new node(data_arg);
+			++size_list;
+			return;
+		}
+		node *newHead = new node(data_arg);
+		newHead->next = head;
+		head = newHead;
+		++size_list;
 	}
 
 
@@ -118,7 +126,7 @@ public:
 	{
 		if(head)
 		{
-			if(head->data == pat)
+			while(head && head->data == pat)
 			{
 				node *newHead = head->next;
 				delete head;
@@ -126,16 +134,19 @@ public:
 				--size_list;
 			}
 			register node *tmp = head;
-			while(tmp->next)
+			if(head)
 			{
-				if(tmp->next->data == pat)
+				while(tmp->next)
 				{
-					removeNext(tmp);
-					--size_list;
+					if(tmp->next->data == pat)
+					{
+						removeNext(tmp);
+						--size_list;
+					}
+					if(tmp->next)
+						tmp = tmp->next;
 				}
-				if(tmp->next)
-					tmp = tmp->next;
-			}		
+			}
 		}
 	}
 
