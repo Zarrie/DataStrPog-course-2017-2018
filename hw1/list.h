@@ -11,7 +11,6 @@ template <typename T>
 class linkedList
 {
 private:
-	friend class linkedList_iterator;
 	class node
 	{
 	public:
@@ -120,7 +119,6 @@ public:
 		head = newHead;
 		++size_list;
 	}
-
 
 	void remove(const T& pat)
 	{
@@ -322,11 +320,6 @@ public:
 				st.pop();
 			}			
 		}
-	}
-
-	void mergeSorted(const linkedList<T>& rhs)
-	{
-		
 	}
 
 	void printAll() const
