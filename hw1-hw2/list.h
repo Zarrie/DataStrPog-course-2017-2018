@@ -92,7 +92,7 @@ public:
 			return *this;
 		}
 
-		listIterator& operator++(int)
+		listIterator operator++(int)
 		{
 			getNext();
 			return *this;
