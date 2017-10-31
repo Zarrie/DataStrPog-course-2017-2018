@@ -33,7 +33,7 @@ void BTreeRemoveTest()
 	tree.insert(36);
 	tree.insert(16);
 	tree.insert(19);
-	//std::cout << tree;
+	std::cout << tree;
 	tree.remove(24);
 	std::cout << tree;
 }
@@ -72,7 +72,7 @@ void BTreePrintTest()
 
 int main(){
 	srand(time(NULL));
-/*
+	
 	BTreeCstrTest();
 	BTreeInsertTest();
 	BTreeRemoveTest();
@@ -80,8 +80,6 @@ int main(){
 	BTreeLeavesCountTest();
 	BTreeMaxLeafTest();
 	BTreePrintTest();
-*/
-
-	BTreeRemoveTest();
+	
 	return 0;
 }
