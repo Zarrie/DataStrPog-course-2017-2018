@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <functional>
 
 template <class T>
@@ -11,8 +12,17 @@ private:
 		Node* rightChild;
 		T dataValue;
 
-	public:
-		Node(const T &_dataValue) : leftChild(nullptr), rightChild(nullptr), dataValue(_dataValue) {}
+		static unsigned	int maxID;
+		unsigned int id;
+
+		Node(const T &_dataValue) : leftChild(nullptr), rightChild(nullptr), dataValue(_dataValue) {
+			id = maxID;
+			maxID++;
+		}
+
+		unsigned int inline getId() const{
+			return id;
+		}
 	};
 
 	Node *root;
@@ -22,12 +32,18 @@ private:
 			curr = new Node(data);
 			return *curr;
 		}
+		if(curr->dataValue == data)
+			return *curr;
 		if(data < curr->dataValue){
 			return insert(data, curr->leftChild);
 		}
 		else{
 			return insert(data, curr->rightChild);
 		}
+	}
+
+	bool isLeaf(const Node *curr) const{
+		return curr->leftChild == nullptr && curr->rightChild == nullptr;
 	}
 
 	Node*& rightMostNode(Node *&curr){
@@ -37,9 +53,21 @@ private:
 	}
 
 	void removeNode(Node *&curr){
+		if(isLeaf(curr)){
+			Node * tmp = curr;
+			curr = nullptr;
+			delete tmp;
+			return;
+		}
+		if(curr->leftChild == nullptr){
+			Node *tmp = curr;
+			curr = curr->rightChild;
+			delete tmp;
+			return; 
+		}
 		Node *& rightMost = rightMostNode(curr->leftChild);
 		curr->dataValue = rightMost->dataValue;
-		delete rightMost;
+		remove(rightMost->dataValue, curr->leftChild);
 	}
 
 	bool remove(const T &data, Node *&curr){
@@ -81,10 +109,6 @@ private:
 		return 1 + std::max(height(curr->leftChild), height(curr->rightChild));
 	}
 
-	bool isLeaf(const Node *curr) const{
-		return curr->leftChild == nullptr && curr->rightChild == nullptr;
-	}
-
 	size_t countLeaves(const Node *curr) const{
 		if(curr == nullptr)
 			return 0;
@@ -111,6 +135,21 @@ private:
 		else if(curr->dataValue == pattern)
 			return true;
 		else return find(curr->leftChild, pattern) || find(curr->rightChild, pattern);
+	}
+
+	// IF NOT STATIC DOES NOT WORK - WHY ?!?!?
+	static void printDotty(std::ostream &out, Node *curr){
+		if(curr == nullptr)
+			return;
+		out << curr->getId() << "[label=\"" << curr->dataValue << "\"];" << std::endl;
+		if (curr->leftChild != nullptr) {
+			out << curr->getId() << "->" << curr->leftChild->getId() << "[color = \"red\"]" << ";" << std::endl;
+		}
+		if (curr->rightChild != nullptr){
+			out << curr->getId() << "->" << curr->rightChild->getId() << ";" << std::endl;
+		}
+		printDotty(out, curr->leftChild);
+		printDotty(out, curr->rightChild);
 	}
 
 public:
@@ -154,7 +193,28 @@ public:
 		return find(root, pattern);
 	}
 
+	friend std::ostream& operator << (std::ostream &out, const BTree<T> &tree)
+	{
+		out << "digraph G {" << std::endl;
+		printDotty(out, tree.root);
+		out << "}" << std::endl;
+		return out;
+	}
+	
+
 	~BTree(){
 
 	}
 };
+
+template <class T>
+unsigned int BTree<T>::Node::maxID = 0;
+/*
+template <class T>
+std::ostream& operator << (std::ostream &out, const BTree<T> &tree)
+{
+	out << "digraph G {" << std::endl;
+	printDotty(out, tree.root);
+	out << "}" << std::endl;
+	return out;
+}*/
