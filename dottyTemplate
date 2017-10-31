@@ -1,0 +1,3 @@
+g++ <fileName>.cpp -o <outFileName>.out
+./<outFileName>.out > <dottyFileName>.dot
+dot -T<typeName eg 'pdf' 'eps' etc> <dottyFileName>.dot > <OutputFileName>.<typeName>
