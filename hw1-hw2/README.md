@@ -1,13 +1,13 @@
-Linear data structures
+#Linear data structures
 
-  ~~Class linkedList
+  ##~~Class linkedList
       
       ~~Iterator for class list
       
-  ~~Class array
+  ##~~Class array
     
       ~~Iterator for class array
       
-Iterator design pattern
+###Iterator design pattern
 
-Proxy class design pattern
+###Proxy class design pattern
