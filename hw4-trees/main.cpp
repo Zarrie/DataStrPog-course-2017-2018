@@ -1,5 +1,7 @@
 #include "BTree.h"
 
+//#include "AST.h"
+
 #include <iostream>
 #include <time.h>
 #include <cstdlib>
@@ -33,7 +35,7 @@ void BTreeRemoveTest()
 	tree.insert(36);
 	tree.insert(16);
 	tree.insert(19);
-	std::cout << tree;
+	//std::cout << tree;
 	tree.remove(24);
 	std::cout << tree;
 }
@@ -70,9 +72,81 @@ void BTreePrintTest()
 	std::cout << tree;
 }
 
+void BTreeLeavesValuesTest()
+{
+	BTree<int> tree;
+	tree.insert(15);
+	tree.insert(12);
+	tree.insert(24);
+	tree.insert(3);
+	tree.insert(13);
+	tree.insert(36);
+	tree.insert(16);
+	tree.insert(19);
+	for(auto it : tree.leavesValues())
+		std::cout << it << " ";
+	std::cout << std::endl;
+}
+
+void BTreeTraceTest()
+{
+	BTree<int> tree;
+	tree.insert(15);
+	tree.insert(12);
+	tree.insert(24);
+	tree.insert(3);
+	tree.insert(13);
+	tree.insert(36);
+	tree.insert(16);
+	tree.insert(19);
+	std::string s = tree.trace(19);
+	std::cout << s << std::endl;
+	tree.prettyPrint();
+}
+
+void BTreeIndOpTest()
+{
+	BTree<int> tree;
+	tree.insert(15);
+	tree.insert(12);
+	tree.insert(24);
+	tree.insert(3);
+	tree.insert(13);
+	tree.insert(36);
+	tree.insert(16);
+	tree.insert(19);
+	//std::cout << tree;
+	for(int i = 0 ; i < 8 ; ++i){
+		//try{
+			std::cout << tree[i] << " ";
+		//}
+		//catch (...){
+		//	continue;
+		//}
+	}
+	std::cout <<  std::endl;
+}
+
+void BTreeLevelTest()
+{
+	BTree<int> tree;
+	tree.insert(15);
+	tree.insert(12);
+	tree.insert(24);
+	tree.insert(3);
+	tree.insert(13);
+	tree.insert(36);
+	tree.insert(16);
+	tree.insert(19);
+	std::vector<int> level1 = tree.level(2);
+	for(auto it : level1)
+		std::cout << it << " ";
+	std::cout << std::endl;
+}
+
 int main(){
 	srand(time(NULL));
-	
+/*
 	BTreeCstrTest();
 	BTreeInsertTest();
 	BTreeRemoveTest();
@@ -80,6 +154,10 @@ int main(){
 	BTreeLeavesCountTest();
 	BTreeMaxLeafTest();
 	BTreePrintTest();
-	
+	BTreeLeavesValuesTest();
+	BTreeTraceTest();
+	BTreeIndOpTest();
+*/
+	BTreeLevelTest();
 	return 0;
 }
