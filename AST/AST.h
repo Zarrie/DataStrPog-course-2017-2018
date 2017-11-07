@@ -48,8 +48,8 @@ private:
 	void clear(Node *& curr){
 		if(curr == nullptr)
 			return;
-		Node *&leftSubTree = curr->leftChild;
-		Node *&rightSubTree = curr->rightChild;
+		Node *leftSubTree = curr->leftChild;
+		Node *rightSubTree = curr->rightChild;
 		delete curr;
 		clear(leftSubTree);
 		clear(rightSubTree);
