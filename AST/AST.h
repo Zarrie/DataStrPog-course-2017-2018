@@ -104,7 +104,7 @@ public:
 	}
 	
 	~AST(){
-		//clear(root);
+		clear(root);
 	}
 };
 
