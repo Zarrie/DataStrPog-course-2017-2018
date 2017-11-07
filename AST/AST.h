@@ -1,12 +1,9 @@
 #pragma once
 
 #include <fstream>
-#include <vector>
 #include <string>
-#include <functional>
 
 #include <iostream>
-#include <iomanip>
 #include <exception>
 
 class AST{
@@ -32,16 +29,8 @@ private:
 
 	Node *root;
 
-	bool isLeaf(const Node *curr) const{
-		return curr->leftChild == nullptr && curr->rightChild == nullptr;
-	}
-
-	bool isTerminal(char c){
-		return c >= '0' && c <= '9';
-	}
-
-	Node* evolve(const AST &leftSubTree, const AST &rightSubTree){
-
+	bool isDigit(const char ch) const{
+		return ch >= '0' && ch <= '9';
 	}
 
 	static void printDotty(std::ostream &out, Node *curr){
@@ -58,18 +47,21 @@ private:
 		printDotty(out, curr->rightChild);
 	}
 
-	bool isDigit(const char ch) const{
-		return ch >= '0' && ch <= '9';
+	void clear(Node *& curr){
+		if(curr == nullptr)
+			return;
+		Node *leftSubTree = curr->leftChild;
+		Node *rightSubTree = curr->rightChild;
+		delete curr;
+		clear(leftSubTree);
+		clear(rightSubTree);
 	}
 
 public:
-	AST() : root(nullptr){
+	AST() : root(nullptr) {}
 
-	}
-
-	AST(const AST& rhs){
-
-	}
+	AST(const AST& rhs) = delete;
+	AST& operator=(const aST& rhs) = delete;
 
 	Node* EvolveSubTree(std::string &str){
 		if(str.length() == 0)
@@ -114,7 +106,7 @@ public:
 	}
 	
 	~AST(){
-
+		clear(root);
 	}
 };
 
