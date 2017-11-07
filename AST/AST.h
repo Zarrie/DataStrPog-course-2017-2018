@@ -58,6 +58,10 @@ private:
 		printDotty(out, curr->rightChild);
 	}
 
+	bool isDigit(const char ch) const{
+		return ch >= '0' && ch <= '9';
+	}
+
 public:
 	AST() : root(nullptr){
 
@@ -67,46 +71,39 @@ public:
 
 	}
 
-	unsigned int findRoot(const std::string &str) const{
-		unsigned int brackets = 0;
-		for(unsigned int i = 0 ; i < str.length() ; ++i){
-			if(str[i] == '(')
-				brackets++;
-			if(str[i] == ')'){
-				brackets--;
-				if(brackets == 1)
-					return i;
-			}
-			throw logic_error("Something went terribly wrong!");
+	Node* EvolveSubTree(std::string &str){
+		if(str.length() == 0)
+			return nullptr;
+		//Current expression is digit terminal so we construct one node tree with the value of str[0]
+		if(isDigit(str[0])){
+			char terminal = str[0];
+			str.erase(str.begin(), str.begin() + 1);
+			return new Node(terminal);
+		}
+		//Current expression is in the form (expression operator expression) so we recursively parse it
+		else{
+			//Read '(' from ( expr op expr )
+			str.erase(str.begin(), str.begin() + 1);
+			//Read left SubtTree expression
+			Node *leftSubTree = EvolveSubTree(str);
+			//Read operator
+			Node *subTreeRoot = new Node(str[0]);
+			//Read 'operator' from (expr operator expr)
+			str.erase(str.begin(), str.begin() + 1);
+			//Read right subTree expression
+			Node *rightSubTree = EvolveSubTree(str);
+			//Read ')' from (expr op expr )
+			str.erase(str.begin(), str.begin() + 1);
+			//Connect the root with left and right subtree
+			subTreeRoot->leftChild = leftSubTree;
+			subTreeRoot->rightChild = rightSubTree;
+			return subTreeRoot;
 		}
 	}
 
-	Node* subTree(const std::string &str){
-		if(str.length() == 1)
-			return new Node(str[0]);
-		if(str.length() == 3){
-			subRoot = new Node(str[1]);
-			subRoot->leftChild = new Node(str[0]);
-			subRoot->rightChild = new Node(str[2]);
-		}
-		else {
-			int 
-			subRoot = new Node(str[findRoot(str)]);
-
-		}
-	}
-
-	AST parseExpression(const std::string &str){
-		if(str.length() == 1){
-			root = new Node(str[0]);
-			return *this;
-		}
-		if(str.length() == 3){
-			root = new Node(str[1]);
-			root->leftChild = new Node(str[0]);
-			root->rightChild = new Node(str[2]);
-			return *this;
-		}
+	void parseExpression(const std::string &str){
+		std::string copy = str;
+		root = EvolveSubTree(copy);
 	}
 
 	friend std::ostream& operator << (std::ostream &out, const AST &tree){
