@@ -1,4 +1,4 @@
-Abstract syntax tree
+Syntax tree
 ====================
 
 ### Parsing left recursive expressions : 
