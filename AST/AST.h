@@ -50,8 +50,8 @@ private:
 	void clear(Node *& curr){
 		if(curr == nullptr)
 			return;
-		Node *leftSubTree = curr->leftChild;
-		Node *rightSubTree = curr->rightChild;
+		Node *&leftSubTree = curr->leftChild;
+		Node *&rightSubTree = curr->rightChild;
 		delete curr;
 		clear(leftSubTree);
 		clear(rightSubTree);
@@ -61,7 +61,7 @@ public:
 	AST() : root(nullptr) {}
 
 	AST(const AST& rhs) = delete;
-	AST& operator=(const aST& rhs) = delete;
+	AST& operator=(const AST& rhs) = delete;
 
 	Node* EvolveSubTree(std::string &str){
 		if(str.length() == 0)
