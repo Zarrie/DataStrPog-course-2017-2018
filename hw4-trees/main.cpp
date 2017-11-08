@@ -144,6 +144,22 @@ void BTreeLevelTest()
 	std::cout << std::endl;
 }
 
+void subTreeSizeTest()
+{
+	BTree<int> tree;
+	tree.insert(15);
+	tree.insert(12);
+	tree.insert(24);
+	tree.insert(3);
+	tree.insert(13);
+	tree.insert(36);
+	tree.insert(16);
+	tree.insert(19);
+
+	tree.subTreeSize();
+	std::cout << tree;
+}
+
 int main(){
 	srand(time(NULL));
 /*
@@ -157,7 +173,8 @@ int main(){
 	BTreeLeavesValuesTest();
 	BTreeTraceTest();
 	BTreeIndOpTest();
-*/
 	BTreeLevelTest();
+*/
+	subTreeSizeTest();
 	return 0;
 }

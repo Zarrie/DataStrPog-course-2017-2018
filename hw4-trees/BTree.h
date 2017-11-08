@@ -229,7 +229,22 @@ private:
 // Trees 2 homework tasks
 
 
+// Trees 3 homework tasks
 
+
+	unsigned int subTreeSize(Node *&curr){
+		if(curr == nullptr)
+			return 0;
+		if(isLeaf(curr)){
+			curr->dataValue = 1;
+			return 1;
+		}
+		curr->dataValue = subTreeSize(curr->leftChild) + subTreeSize(curr->rightChild) + 1;
+		return curr->dataValue;
+	}
+
+
+// Trees 3 homework tasks
 
 
 	bool find(const Node*& curr, const T &pattern){
@@ -298,6 +313,10 @@ public:
 
 	void prettyPrint(){
 		prettyPrint(root, 0);
+	}
+
+	void subTreeSize(){
+		subTreeSize(root);
 	}
 
 	std::string trace(const T &pattern) const{
