@@ -5,7 +5,7 @@
 #include <string>
 #include <functional>
 #include <exception>
-
+#include <unordered_set>
 #include <iostream>
 #include <iomanip>
 
@@ -38,8 +38,9 @@ private:
 			curr = new Node(data);
 			return *curr;
 		}
-		if(curr->dataValue == data)
-			return *curr;
+		//Allow/Forbid elements duplication
+		/*if(curr->dataValue == data)
+			return *curr;*/
 		if(data < curr->dataValue){
 			return insert(data, curr->leftChild);
 		}
@@ -210,17 +211,17 @@ private:
 		return at(curr->rightChild, pos);
 	}
 
-	std::vector<T> level(const Node *curr, const int k){
+	std::vector<T> level(const Node *curr, const int depth){
 		if(curr == nullptr)
 			return std::vector<T>();
-		else if(k == 0){
+		else if(depth == 0){
 			std::vector<T> res;
 			res.push_back(curr->dataValue);
 			return res;
 		}
 		else 
-			return append(level(curr->leftChild, k - 1), 
-						  level(curr->rightChild, k - 1));
+			return append(level(curr->leftChild, depth - 1), 
+						  level(curr->rightChild, depth - 1));
 	}
 
 
@@ -231,7 +232,58 @@ private:
 
 // Trees 3 homework tasks
 
+	std::unordered_set<T> appendSets(const std::unordered_set<T> &lhs, const std::unordered_set<T> &rhs){
+		std::unordered_set<T> res;
+		res.insert(lhs.begin(), lhs.end());
+		res.insert(rhs.begin(), rhs.end());
+		return res;
+	}
 
+	std::unordered_set<T> levelUniques(const Node *curr, const int depth){
+		if(curr == nullptr)
+			return std::unordered_set <T>();
+		else if(depth == 0){
+			std::unordered_set <T> res;
+			res.insert(curr->dataValue);
+			return res;
+		}
+		else 
+			return appendSets(levelUniques(curr->leftChild, depth - 1), 
+						  levelUniques(curr->rightChild, depth - 1));
+	}
+
+	bool isBST(const Node *curr) const{
+		if(curr == nullptr)
+			return true;
+		else if(curr->leftChild != nullptr && curr->rightChild != nullptr)
+			return curr->leftChild->dataValue < curr->dataValue &&
+				   curr->rightChild->dataValue >= curr->dataValue &&
+				   isBST(curr->leftChild) && isBST(curr->rightChild);
+		else if(curr->leftChild != nullptr)
+			return curr->leftChild->dataValue < curr->dataValue && isBST(curr->leftChild);
+		else if(curr->rightChild != nullptr) 
+			return curr->rightChild->dataValue >= curr->dataValue && isBST(curr->rightChild);
+		else 
+			return true;
+	} 
+
+public:
+	int equalLevels(){
+		int h = height(root), result = 0;
+		for(int i = 0 ; i < h - 1 ; ++i){
+			for(int j = i + 1 ; j < h ; ++j){
+				if(levelUniques(root, i) == levelUniques(root, j))
+					result++;
+			}
+		}
+		return result;
+	}
+
+	bool isBST() const{
+		return isBST(root);
+	}
+
+private:
 	unsigned int subTreeSize(Node *&curr){
 		if(curr == nullptr)
 			return 0;
