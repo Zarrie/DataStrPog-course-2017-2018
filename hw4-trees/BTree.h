@@ -8,6 +8,7 @@
 #include <unordered_set>
 #include <iostream>
 #include <iomanip>
+#include <limits.h>
 
 template <class T>
 class BTree{
@@ -252,20 +253,20 @@ private:
 						  levelUniques(curr->rightChild, depth - 1));
 	}
 
-	bool isBST(const Node *curr) const{
+	bool isBST(const Node *curr, std::pair<int, int> bounds) const{
 		if(curr == nullptr)
 			return true;
-		else if(curr->leftChild != nullptr && curr->rightChild != nullptr)
-			return curr->leftChild->dataValue < curr->dataValue &&
-				   curr->rightChild->dataValue >= curr->dataValue &&
-				   isBST(curr->leftChild) && isBST(curr->rightChild);
-		else if(curr->leftChild != nullptr)
-			return curr->leftChild->dataValue < curr->dataValue && isBST(curr->leftChild);
-		else if(curr->rightChild != nullptr) 
-			return curr->rightChild->dataValue >= curr->dataValue && isBST(curr->rightChild);
-		else 
-			return true;
-	} 
+		else{
+			return curr->dataValue < bounds.second && curr->dataValue >= bounds.first &&
+			isBST(curr->leftChild, std::pair<int, int>(bounds.first, std::min(curr->dataValue, bounds.second))) &&
+			isBST(curr->rightChild, std::pair<int, int>(std::max(curr->dataValue, bounds.first), bounds.second));
+		}
+	}
+
+
+	void buildBalancedText(const std::string &str){
+
+	}
 
 public:
 	int equalLevels(){
@@ -280,7 +281,7 @@ public:
 	}
 
 	bool isBST() const{
-		return isBST(root);
+		return isBST(root, std::make_pair(INT_MIN, INT_MAX));
 	}
 
 private:
