@@ -173,6 +173,20 @@ void equalLevelsTest()
 void isBSTTest()
 {
 	BTree<int> tree;
+	/*tree.insert(15);
+	tree.insert(12);
+	tree.insert(24);
+	tree.insert(3);
+	tree.insert(13);
+	tree.insert(36);
+	tree.insert(16);
+	tree.insert(19);*/
+	std::cout << tree.isBST() << std::endl;
+}
+
+void treeIteratorTest()
+{
+	BTree<int> tree;
 	tree.insert(15);
 	tree.insert(12);
 	tree.insert(24);
@@ -181,8 +195,15 @@ void isBSTTest()
 	tree.insert(36);
 	tree.insert(16);
 	tree.insert(19);
-	std::cout << tree.isBST() << std::endl;
+
+	BTree<int>::TreeIterator it = tree.begin();
+	while(it != tree.end()){
+		std::cout << *it << " ";
+		it++;
+	}
+	std::cout << std::endl;
 }
+
 
 int main(){
 	srand(time(NULL));
@@ -200,8 +221,9 @@ int main(){
 	BTreeLevelTest();
 	subTreeSizeTest();
 	equalLevelsTest();
-*/
 	isBSTTest();
+*/
+	treeIteratorTest();
 
 	return 0;
 }

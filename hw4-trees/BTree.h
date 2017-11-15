@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include <vector>
+#include <stack>
+#include <utility>
 #include <string>
 #include <functional>
 #include <exception>
@@ -298,6 +300,86 @@ private:
 
 
 // Trees 3 homework tasks
+
+
+
+
+// Trees 4 homework tasks
+
+public:
+	class TreeIterator{
+	private:
+		std::stack< std::pair< Node*, bool> > state;
+
+		void getNext(){
+			while(!state.empty() && state.top().second == false){
+				std::pair< Node *, bool> curr = state.top();
+				state.pop();
+				if(curr.first->rightChild != nullptr)
+					state.push(std::make_pair(curr.first->rightChild, false));
+				state.push(std::make_pair(curr.first, true));
+				if(curr.first->leftChild != nullptr)
+					state.push(std::make_pair(curr.first->leftChild, false));
+			}
+		}
+	public:
+		TreeIterator(Node *root_){
+			if(root_ != nullptr){
+				state.push(std::make_pair(root_, false));
+				getNext();
+			}
+		}
+
+		TreeIterator(const TreeIterator &rhs){
+			state = rhs.state;
+			getNext();
+		}
+
+		TreeIterator& operator=(const TreeIterator &rhs){
+			if(this != &rhs){
+				state = rhs.state;
+				getNext();				
+			}
+		}
+
+		T& operator *(){
+			return state.top().first->dataValue;
+		}
+
+		bool operator ==(const TreeIterator &it){
+			return state == it.state;
+		}
+
+		bool operator !=(const TreeIterator &it){
+			return state != it.state; 
+		}
+
+		TreeIterator& operator++(){
+			state.pop();
+			getNext();
+			return *this;
+		}
+
+		void operator++(int){
+			state.pop();
+			getNext();
+		}
+	};
+
+	TreeIterator begin(){
+		TreeIterator it(root);
+		return it;
+	}
+
+	TreeIterator end(){
+		TreeIterator it(nullptr);
+		return it;
+	}
+
+
+// Trees 4 homework tasks
+
+
 
 
 	bool find(const Node*& curr, const T &pattern){
