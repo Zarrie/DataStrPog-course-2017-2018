@@ -1,4 +1,4 @@
 # Binary Tree
 
-    Class BTree with basic methods implemented
+    Class BTree
 #### STILL NOT BALANCED
