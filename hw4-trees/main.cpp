@@ -197,11 +197,46 @@ void treeIteratorTest()
 	tree.insert(19);
 
 	BTree<int>::TreeIterator it = tree.begin();
+	it.inorder();
 	while(it != tree.end()){
 		std::cout << *it << " ";
 		it++;
 	}
 	std::cout << std::endl;
+
+	it = tree.begin();
+	it.preorder();
+	while(it != tree.end()){
+		std::cout << *it << " ";
+		it++;
+	}
+	std::cout << std::endl;
+
+	it = tree.begin();
+	it.postorder();
+	while(it != tree.end()){
+		std::cout << *it << " ";
+		it++;
+	}
+	std::cout << std::endl;
+
+	it = tree.begin();
+	it.leavesOnly();
+	while(it != tree.end()){
+		std::cout << *it << " ";
+		it++;
+	}
+	std::cout << std::endl;
+
+	/*BTree<int>::TreeIterator it_pred = tree.begin();
+	it_pred.inorder();
+	it_pred.pred([](int x)->bool{ return ((x % 2) == 0); });
+	while(it_pred != tree.end()){
+		std::cout << *it_pred << " ";
+		it_pred++;
+	}
+	std::cout << std::endl;*/
+
 }
 
 
