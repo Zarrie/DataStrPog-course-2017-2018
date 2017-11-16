@@ -311,10 +311,11 @@ public:
 	private:
 		std::stack< std::pair< Node*, bool> > state;
 		std::string traversal;
-		//std::function<bool(const T&)> Pred;
+		std::function<bool(const T&)> Pred;
 		Node *root_;
 
 		void getNext(){
+			//do{
 			if(traversal == "inorder")
 				getNextInorder();
 			else if(traversal == "preorder")
@@ -323,6 +324,7 @@ public:
 				getNextPostorder();
 			else if (traversal == "leavesOnly")
 				getNextLeavesOnly();
+			//} while(!state.empty() || Pred(state.top().first->dataValue) == true);
 		}
 
 		void getNextInorder(){
@@ -375,10 +377,14 @@ public:
 		}
 
 	public:
-		/*
+		
 		void pred(const std::function<bool(const T&)> &pred_ = [](const T&)->bool{ return true; }){
 			Pred = pred_;
-		}*/
+			while(!state.empty())
+				state.pop();
+			state.push(std::make_pair(root_, false));
+			getNext();
+		}
 
 		TreeIterator(Node *root_arg){
 			root_ = root_arg;
@@ -386,17 +392,19 @@ public:
 		}
 
 		TreeIterator(const TreeIterator &rhs){
+			root_ = rhs.root_;
 			state = rhs.state;
 			traversal = rhs.traversal;
-			//Pred = rhs.Pred;
+			Pred = rhs.Pred;
 			getNext();
 		}
 
 		TreeIterator& operator=(const TreeIterator &rhs){
 			if(this != &rhs){
+				root_ = rhs.root_;
 				state = rhs.state;
 				traversal = rhs.traversal;
-				//Pred = rhs.Pred;		
+				Pred = rhs.Pred;		
 				getNext();			
 			}
 		}
