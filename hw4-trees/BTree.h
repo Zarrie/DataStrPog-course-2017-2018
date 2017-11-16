@@ -310,8 +310,22 @@ public:
 	class TreeIterator{
 	private:
 		std::stack< std::pair< Node*, bool> > state;
+		std::string traversal;
+		//std::function<bool(const T&)> Pred;
+		Node *root_;
 
 		void getNext(){
+			if(traversal == "inorder")
+				getNextInorder();
+			else if(traversal == "preorder")
+				getNextPreorder();
+			else if(traversal == "postorder")
+				getNextPostorder();
+			else if (traversal == "leavesOnly")
+				getNextLeavesOnly();
+		}
+
+		void getNextInorder(){
 			while(!state.empty() && state.top().second == false){
 				std::pair< Node *, bool> curr = state.top();
 				state.pop();
@@ -322,23 +336,100 @@ public:
 					state.push(std::make_pair(curr.first->leftChild, false));
 			}
 		}
-	public:
-		TreeIterator(Node *root_){
-			if(root_ != nullptr){
-				state.push(std::make_pair(root_, false));
-				getNext();
+
+		void getNextPreorder(){
+			while(!state.empty() && state.top().second == false){
+				std::pair< Node *, bool> curr = state.top();
+				state.pop();
+				if(curr.first->rightChild != nullptr)
+					state.push(std::make_pair(curr.first->rightChild, false));
+				if(curr.first->leftChild != nullptr)
+					state.push(std::make_pair(curr.first->leftChild, false));
+				state.push(std::make_pair(curr.first, true));
 			}
+		}
+
+		void getNextPostorder(){
+			while(!state.empty() && state.top().second == false){
+				std::pair< Node *, bool> curr = state.top();
+				state.pop();
+				state.push(std::make_pair(curr.first, true));
+				if(curr.first->rightChild != nullptr)
+					state.push(std::make_pair(curr.first->rightChild, false));
+				if(curr.first->leftChild != nullptr)
+					state.push(std::make_pair(curr.first->leftChild, false));
+			}
+		}
+
+		void getNextLeavesOnly(){
+			while(!state.empty() && state.top().second == false){
+				std::pair< Node *, bool> curr = state.top();
+				state.pop();
+				if(curr.first->leftChild == nullptr && curr.first->rightChild == nullptr)
+					state.push(std::make_pair(curr.first, true));
+				if(curr.first->rightChild != nullptr)
+					state.push(std::make_pair(curr.first->rightChild, false));
+				if(curr.first->leftChild != nullptr)
+					state.push(std::make_pair(curr.first->leftChild, false));
+			}
+		}
+
+	public:
+		/*
+		void pred(const std::function<bool(const T&)> &pred_ = [](const T&)->bool{ return true; }){
+			Pred = pred_;
+		}*/
+
+		TreeIterator(Node *root_arg){
+			root_ = root_arg;
+			//pred();
 		}
 
 		TreeIterator(const TreeIterator &rhs){
 			state = rhs.state;
+			traversal = rhs.traversal;
+			//Pred = rhs.Pred;
 			getNext();
 		}
 
 		TreeIterator& operator=(const TreeIterator &rhs){
 			if(this != &rhs){
 				state = rhs.state;
-				getNext();				
+				traversal = rhs.traversal;
+				//Pred = rhs.Pred;		
+				getNext();			
+			}
+		}
+
+		void inorder(){
+			if(root_ != nullptr){
+				state.push(std::make_pair(root_, false));
+				traversal = "inorder";
+				getNextInorder();				
+			}
+		}
+
+		void preorder(){
+			if(root_ != nullptr){
+				state.push(std::make_pair(root_, false));
+				traversal = "preorder";
+				getNextPreorder();				
+			}
+		}
+
+		void postorder(){
+			if(root_ != nullptr){
+				state.push(std::make_pair(root_, false));
+				traversal = "postorder";
+				getNextPostorder();				
+			}
+		}
+
+		void leavesOnly(){
+			if(root_ != nullptr){
+				state.push(std::make_pair(root_, false));
+				traversal = "leavesOnly";
+				getNextLeavesOnly();
 			}
 		}
 
@@ -347,17 +438,18 @@ public:
 		}
 
 		bool operator ==(const TreeIterator &it){
-			return state == it.state;
+			return (state.empty() && it.state.empty()) ||
+            	(!state.empty () && !it.state.empty() &&
+                (state.top().first == it.state.top().first) && (state.top().second == it.state.top().second));
 		}
 
 		bool operator !=(const TreeIterator &it){
-			return state != it.state; 
+			return !(*this == it); 
 		}
 
 		TreeIterator& operator++(){
 			state.pop();
 			getNext();
-			return *this;
 		}
 
 		void operator++(int){
