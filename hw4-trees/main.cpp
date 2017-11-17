@@ -196,46 +196,61 @@ void treeIteratorTest()
 	tree.insert(16);
 	tree.insert(19);
 
-	BTree<int>::TreeIterator it = tree.begin();
-	it.inorder();
+	BTree<int>::TreeIterator it = tree.begin("inorder");
 	while(it != tree.end()){
 		std::cout << *it << " ";
 		it++;
 	}
 	std::cout << std::endl;
 
-	it = tree.begin();
-	it.preorder();
+	it = tree.begin("preorder");
 	while(it != tree.end()){
 		std::cout << *it << " ";
 		it++;
 	}
 	std::cout << std::endl;
 
-	it = tree.begin();
-	it.postorder();
+	it = tree.begin("postorder");
 	while(it != tree.end()){
 		std::cout << *it << " ";
 		it++;
 	}
 	std::cout << std::endl;
 
-	it = tree.begin();
-	it.leavesOnly();
+	it = tree.begin("leavesOnly");
 	while(it != tree.end()){
 		std::cout << *it << " ";
 		it++;
 	}
 	std::cout << std::endl;
 
-	/*BTree<int>::TreeIterator it_pred = tree.begin();
-	it_pred.inorder();
-	it_pred.pred([](int x)->bool{ return ((x % 2) == 0); });
+	BTree<int>::TreeIterator it_pred = tree.begin("inorder", [](const int& x)->bool{ return !(x%2); });
 	while(it_pred != tree.end()){
 		std::cout << *it_pred << " ";
 		it_pred++;
 	}
-	std::cout << std::endl;*/
+	std::cout << std::endl;
+
+	it_pred = tree.begin("postorder", [](const int& x)->bool{ return !(x%2); });
+	while(it_pred != tree.end()){
+		std::cout << *it_pred << " ";
+		it_pred++;
+	}
+
+	std::cout << std::endl;
+	it_pred = tree.begin("preorder", [](const int& x)->bool{ return !(x%2); });
+	while(it_pred != tree.end()){
+		std::cout << *it_pred << " ";
+		it_pred++;
+	}
+
+	std::cout << std::endl;
+	it_pred = tree.begin("leavesOnly", [](const int& x)->bool{ return !(x%2); });
+	while(it_pred != tree.end()){
+		std::cout << *it_pred << " ";
+		it_pred++;
+	}
+	std::cout << std::endl;
 
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 #include <fstream>
 #include <vector>
 #include <stack>
@@ -311,11 +313,10 @@ public:
 	private:
 		std::stack< std::pair< Node*, bool> > state;
 		std::string traversal;
-		std::function<bool(const T&)> Pred;
+		std::function<bool(const T&)> pred;
 		Node *root_;
 
 		void getNext(){
-			//do{
 			if(traversal == "inorder")
 				getNextInorder();
 			else if(traversal == "preorder")
@@ -324,7 +325,6 @@ public:
 				getNextPostorder();
 			else if (traversal == "leavesOnly")
 				getNextLeavesOnly();
-			//} while(!state.empty() || Pred(state.top().first->dataValue) == true);
 		}
 
 		void getNextInorder(){
@@ -333,21 +333,23 @@ public:
 				state.pop();
 				if(curr.first->rightChild != nullptr)
 					state.push(std::make_pair(curr.first->rightChild, false));
-				state.push(std::make_pair(curr.first, true));
+				if(pred(curr.first->dataValue))
+					state.push(std::make_pair(curr.first, true));
 				if(curr.first->leftChild != nullptr)
 					state.push(std::make_pair(curr.first->leftChild, false));
 			}
 		}
 
 		void getNextPreorder(){
-			while(!state.empty() && state.top().second == false){
+			while(!state.empty() && (state.top().second == false || !pred(state.top().first->dataValue))){
 				std::pair< Node *, bool> curr = state.top();
 				state.pop();
 				if(curr.first->rightChild != nullptr)
 					state.push(std::make_pair(curr.first->rightChild, false));
 				if(curr.first->leftChild != nullptr)
 					state.push(std::make_pair(curr.first->leftChild, false));
-				state.push(std::make_pair(curr.first, true));
+				if(pred(curr.first->dataValue))
+					state.push(std::make_pair(curr.first, true));
 			}
 		}
 
@@ -355,7 +357,8 @@ public:
 			while(!state.empty() && state.top().second == false){
 				std::pair< Node *, bool> curr = state.top();
 				state.pop();
-				state.push(std::make_pair(curr.first, true));
+				if(pred(curr.first->dataValue))
+					state.push(std::make_pair(curr.first, true));
 				if(curr.first->rightChild != nullptr)
 					state.push(std::make_pair(curr.first->rightChild, false));
 				if(curr.first->leftChild != nullptr)
@@ -367,7 +370,7 @@ public:
 			while(!state.empty() && state.top().second == false){
 				std::pair< Node *, bool> curr = state.top();
 				state.pop();
-				if(curr.first->leftChild == nullptr && curr.first->rightChild == nullptr)
+				if(curr.first->leftChild == nullptr && curr.first->rightChild == nullptr && pred(curr.first->dataValue))
 					state.push(std::make_pair(curr.first, true));
 				if(curr.first->rightChild != nullptr)
 					state.push(std::make_pair(curr.first->rightChild, false));
@@ -376,37 +379,21 @@ public:
 			}
 		}
 
-	public:
-		
-		void pred(const std::function<bool(const T&)> &pred_ = [](const T&)->bool{ return true; }){
-			Pred = pred_;
-			while(!state.empty())
-				state.pop();
-			state.push(std::make_pair(root_, false));
-			getNext();
-		}
-
-		TreeIterator(Node *root_arg){
+		TreeIterator(Node *root_arg, const std::string traversal_ = std::string(), 
+				 const std::function<bool(const T&)> &pred_ = [](const T&)->bool{ return true; }){
 			root_ = root_arg;
-			//pred();
-		}
-
-		TreeIterator(const TreeIterator &rhs){
-			root_ = rhs.root_;
-			state = rhs.state;
-			traversal = rhs.traversal;
-			Pred = rhs.Pred;
+			traversal = traversal_;
+			pred = pred_;
+			if(traversal == "inorder")
+				inorder();
+			else if(traversal == "preorder")
+				preorder();
+			else if(traversal == "postorder")
+				postorder();
+			else if (traversal == "leavesOnly")
+				leavesOnly();
 			getNext();
-		}
-
-		TreeIterator& operator=(const TreeIterator &rhs){
-			if(this != &rhs){
-				root_ = rhs.root_;
-				state = rhs.state;
-				traversal = rhs.traversal;
-				Pred = rhs.Pred;		
-				getNext();			
-			}
+			//pred();
 		}
 
 		void inorder(){
@@ -441,6 +428,39 @@ public:
 			}
 		}
 
+
+
+	public:
+		/*
+		void pred(const std::function<bool(const T&)> &pred_ = [](const T&)->bool{ return true; }){
+			pred = pred_;
+			while(!state.empty())
+				state.pop();
+			state.push(std::make_pair(root_, false));
+			getNext();
+		}
+		*/
+
+		TreeIterator() {}
+
+		/*TreeIterator(const TreeIterator &rhs){
+			root_ = rhs.root_;
+			state = rhs.state;
+			traversal = rhs.traversal;
+			pred = rhs.pred;
+			getNext();
+		}
+
+		TreeIterator& operator=(const TreeIterator &rhs){
+			if(this != &rhs){
+				root_ = rhs.root_;
+				state = rhs.state;
+				traversal = rhs.traversal;
+				pred = rhs.pred;		
+				getNext();			
+			}
+		}*/
+
 		T& operator *(){
 			return state.top().first->dataValue;
 		}
@@ -464,10 +484,15 @@ public:
 			state.pop();
 			getNext();
 		}
+
+		friend TreeIterator BTree<T>::begin(const std::string traversal_ = std::string(), 
+					   const std::function<bool(const T&)> &pred_ = [](const T&)->bool{ return true; });
+		friend TreeIterator BTree<T>::end();
 	};
 
-	TreeIterator begin(){
-		TreeIterator it(root);
+	TreeIterator begin(const std::string traversal_ = std::string(), 
+					   const std::function<bool(const T&)> &pred_ = [](const T&)->bool{ return true; }){
+		TreeIterator it(root, traversal_, pred_);
 		return it;
 	}
 
