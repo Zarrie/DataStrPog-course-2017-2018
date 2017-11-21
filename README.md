@@ -3,3 +3,5 @@
 * example programs 
 
 * homework solutions 
+
+* Tree iterator added
