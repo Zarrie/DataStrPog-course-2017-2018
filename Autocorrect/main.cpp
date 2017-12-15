@@ -1,4 +1,5 @@
 #include "autocorrect.h"
+#include <fstream>
 
 void insertTestDict(){
 	Dictionary d;
@@ -35,9 +36,43 @@ void generateTestDict(){
 	std::cout << "\n";
 }
 
+bool isValid(const std::string &word){
+	for(int i = 0 ; i < word.length() ; ++i)
+		if(word[i] < 'a' || word[i] > 'z')
+			return false;
+	return true;;
+}
+
+void bigDataTest(){
+	std::ifstream words("dictionary", std::ios::in);
+	std::string curr;
+	Dictionary d;
+	while(!words.eof()){
+		words >> curr;
+		if(isValid(curr))
+			d.insert(curr);
+	}
+	std::string word;
+	while(true){
+		std::cin >> word;
+		if(word == "0") break;
+		for( auto it : d.suggestions(word, 5))
+			std::cout << it << " ";
+		std::cout << "\n";		
+	}
+
+	/*for(int i = 0 ; i < 1000 ; ++i){
+		words >> curr;
+		if(isValid(curr))
+			d.insert(curr);
+	}*/
+	//std::cout << d;
+}
+
 int main(){
-	insertTestDict();
-	generateTestDict();
+	//insertTestDict();
+	//generateTestDict();
+	bigDataTest();
 
 	return 0;
 }
