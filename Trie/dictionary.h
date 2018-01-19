@@ -42,7 +42,7 @@ private:
 public:
 	dictionary() : root(new node()) {}
 
-	dictionary(const dictionary &rhs) {
+	dictionary(const dictionary &rhs) : root(new node()){
 		std::vector<word> wordsToInsert;
 		allWords(rhs.root, std::string(), wordsToInsert);
 		for(auto it : wordsToInsert)
@@ -119,7 +119,7 @@ public:
 	}
 
 	~dictionary(){
-		//removeDictionary(root);
+		removeDictionary(root);
 	}
 
 };

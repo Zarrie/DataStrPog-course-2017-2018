@@ -35,6 +35,8 @@ void dictionaryCOPYandASSIGNEMENTtest(){
 	std::cout << d1.find("coconut");
 	d.remove("coconut");
 	std::cout << d1.find("coconut");
+	std::cout << d.find("coconut");
+	std::cout << std::endl;
 }
 
 int main(){
