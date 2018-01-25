@@ -11,8 +11,6 @@
 #include <climits>
 #include <algorithm>
 
-//#include "interactiveIterator.h"
-
 using crossroadName = std::string;
 using distance = uint;
 
@@ -51,46 +49,41 @@ private:
 		return adjacencyList.at(cr1).at(cr2);
 	}
 
-/*
-	bool path(const crossroadName &currCR, const crossroadName &cr2, std::set<crossroadName> &visited) const{
-		if (currCR == cr2)
-			return true;
-		visited.insert(currCR);
-		for(auto it : adjacencyList.at(currCR)){
-			if (visited.find(it.first) == visited.end()){
-				if (path(it.first, cr2, visited))
-					return true;
-			}
-		}
-		return false;
+	void inOutDegrees(std::unordered_map<crossroadName, std::pair<uint, uint>> &in_outDegree) const{
+		for(auto nodeListPair : adjacencyList)
+			in_outDegree[nodeListPair.first] = std::make_pair(0, nodeListPair.second.size());
+		for(auto nodeListPair : adjacencyList)
+			for(auto nodeEdgePair : nodeListPair.second)
+				in_outDegree.at(nodeEdgePair.first).first++;
 	}
-	bool trip(const	crossroadName &currCR, std::set<crossroadName> &visited) const{
-		if (visited.find(currCR) != visited.end())
-			return true;
-		visited.insert(currCR);
-		for(auto it : adjacencyList.at(currCR)){
-			if (visited.find(it.first) == visited.end()){
-				if (trip(it.first, visited))
-					return true;
-			}
+
+	crossroadName hasInitNode(const std::vector<crossroadName> &differentInOutDegreesNodes, const std::unordered_map<crossroadName, std::pair<uint, uint>> &in_outDegree) const{
+		if(abs(in_outDegree.at(differentInOutDegreesNodes[0]).first - in_outDegree.at(differentInOutDegreesNodes[0]).second) == 1 &&
+		   abs(in_outDegree.at(differentInOutDegreesNodes[1]).first - in_outDegree.at(differentInOutDegreesNodes[1]).second) == 1){
+			if(in_outDegree.at(differentInOutDegreesNodes[0]).first < in_outDegree.at(differentInOutDegreesNodes[0]).second)
+				return differentInOutDegreesNodes[0];
+			else
+				return differentInOutDegreesNodes[1];
 		}
-		return false;
+		else
+			return std::string();
 	}
-	*/
-	/*
-	void deadEnd(std::set<crossroadName> &visited, const crossroadName &currCR, std::set<crossroadName>& result) const{
-		visited.insert(currCR);
-		for(auto it : adjacencyList.at(currCR)){
-			if(adjacencyList.at(currCR).empty()){
-				result.insert(currCR);
-			}
-			else{
-				if (visited.find(it.first) == visited.end()){
-					deadEnd(visited, it.first, result);
-				}
-			}
+
+	crossroadName getInitNode(const std::unordered_map<crossroadName, std::pair<uint, uint>> &in_outDegree) const{
+		const uint maxDifferentDegreesAllowingEulerianPath = 2;
+		std::vector<crossroadName> differentInOutDegreesNodes;
+		for(auto it : in_outDegree)
+			if(it.second.first != it.second.second)
+				differentInOutDegreesNodes.push_back(it.first);
+		if(differentInOutDegreesNodes.size() > maxDifferentDegreesAllowingEulerianPath)	// No eulerian path/circle exists
+			return std::string();
+		else if(differentInOutDegreesNodes.size() == maxDifferentDegreesAllowingEulerianPath){ // No eulerian circle exists but possibly a path does
+			return hasInitNode(differentInOutDegreesNodes, in_outDegree);
 		}
-	}*/
+		else{
+			return in_outDegree.begin()->first;
+		}
+	}
 
 public:
 
@@ -109,13 +102,6 @@ public:
 			std::cout << "Couldn't open file!\n";
 		}
 	}
-	/*
-	bool path(const crossroadName &cr1, const crossroadName &cr2) const{
-		if (adjacencyList.find(cr1) == adjacencyList.end() || adjacencyList.find(cr2) == adjacencyList.end())
-			return false;
-		std::set<crossroadName> visited;
-		return path(cr1, cr2, visited);
-	}*/
 
 	bool hasPath(const crossroadName &cr1, const crossroadName &cr2) const{
 		if (adjacencyList.find(cr1) == adjacencyList.end() || adjacencyList.find(cr2) == adjacencyList.end())
@@ -137,14 +123,7 @@ public:
 		}
 		return false;
 	}
-/*
-	bool trip(const crossroadName &currCR) const{
-		if (adjacencyList.find(currCR) == adjacencyList.end())
-			return false;
-		std::set<crossroadName> visited;
-		return trip(currCR, visited);
-	}
-*/
+
 	bool trip(const crossroadName &initCR) const{
 		std::stack<crossroadName> dfsStack;
 		std::set<crossroadName> visited;
@@ -163,14 +142,8 @@ public:
 		}
 		return false;
 	}
-	/*
-	std::set<crossroadName> deadEnd() const{
-		std::set<crossroadName> result, visited;
-		//std::cout << adjacencyList.begin()->first << std::endl;
-		deadEnd(visited, adjacencyList.begin()->first, result);
-		return result;
-	}*/
 
+	/*
 	std::set<crossroadName> deadEnd() const{
 		std::stack<crossroadName> dfsStack;
 		std::set<crossroadName> visited, result;
@@ -192,6 +165,15 @@ public:
 					++it;
 				dfsStack.push(it->first);
 			}
+		}
+		return result;
+	}*/
+
+	std::set<crossroadName> deadEnd() const{
+		std::set<crossroadName> result;
+		for(auto it : adjacencyList){
+			if(it.second.empty())
+				result.insert(it.first);
 		}
 		return result;
 	}
@@ -266,54 +248,30 @@ public:
 		return result;
 	}
 
-	//friend class interactiveIterator;
-
-/*
-	struct compare{
-		bool operator()(const path &lhs, const path &rhs) const{
-			return lhs.second > rhs.second;
-		}
-	};
-
-	bool vecFind(const std::vector<crossroadName> &v, const crossroadName& e) const{
-		for(auto it : v)
-			if(it == e)
-				return true;
-		return false;
-	}
-
-	std::set<path> KshortestPaths(const crossroadName &s, const crossroadName &t, uint k = 3) const{	
-		path Pu;
-		std::priority_queue<path, std::vector<path>, compare> B;
-		std::set<path> P;
-		std::unordered_map< crossroadName, distance> countU;
-		for(auto it : adjacencyList)
-			countU[it.first] = 0;
-		Pu.first.push_back(s);
-		Pu.second = 0;
-		B.push(Pu);
-		crossroadName u = s;
-		while(!B.empty() && countU[u] < k){
-			Pu = B.top(); B.pop();
-			countU[u] = countU[u] + 1;
-			if(u == t)
-				P.insert(Pu);
-			if(countU[u] < k){
-				for(auto v : adjacencyList.at(u)){
-					if(!vecFind(Pu.first, v.first)){
-						path Pv;
-						Pv.first = Pu.first;
-						Pv.first.push_back(v.first);
-						Pv.second = Pu.second + getDist(u, v.first);
-						B.push(Pv);
-					}
-				}
+	std::vector<crossroadName> fullTrip() const{
+		std::unordered_map<crossroadName, std::pair<uint, uint>> in_outDegree;
+		inOutDegrees(in_outDegree);
+		crossroadName initCR = getInitNode(in_outDegree);
+		if(initCR.empty())
+			return std::vector<crossroadName>(); // No eulerian path or circle exists
+		std::stack<crossroadName> st;
+		std::vector<crossroadName> resultPath;
+		std::unordered_map<crossroadName, std::unordered_map<crossroadName, distance>> adjacencyListCopy = adjacencyList;
+		st.push(initCR);
+		while(!st.empty()){
+			crossroadName currCR = st.top();
+			if(!adjacencyListCopy.at(currCR).empty()){
+				st.push(adjacencyListCopy.at(currCR).begin()->first);
+				adjacencyListCopy.at(currCR).erase(adjacencyListCopy.at(currCR).begin());
+			}
+			else{
+				resultPath.push_back(currCR);
+				st.pop();
 			}
 		}
-		return P;
+		std::reverse(resultPath.begin(), resultPath.end());
+		return resultPath;
 	}
-*/
-	// test methods
 
 	void printMapNodes(){
 		for(auto it : adjacencyList){
@@ -321,14 +279,7 @@ public:
 		}
 	}
 
-	// iterator utility methods
-
 	bool find(const crossroadName &CR) const{
 		return adjacencyList.find(CR) != adjacencyList.end();
 	}
-
-	//std::unordered_map<crossroadName, distance> neighbors(const crossroadName &CR) const{
-	//	return adjacencyList.at(CR);
-	//}
-
 };
