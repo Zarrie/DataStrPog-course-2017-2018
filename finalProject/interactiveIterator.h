@@ -15,7 +15,10 @@ private:
 
 public:
 	interactiveIterator(const std::string &fileName){
-		currMap.load(fileName);
+		if(currMap.load(fileName))
+			std::cout << "> Map loaded!" << std::endl;
+		else
+			std::cout << "Couldn't open file!\n";
 	}
 
 	void location() const{
@@ -35,9 +38,9 @@ public:
 		}
 	}
 
-	void neighbors(const crossroadName &currCR) const{
-		std::cout << "> Neighbors of crossroad " << currCR << " are " << std::endl;
-		for(auto it : currMap.neighbors(currCR))
+	void neighbors() const{
+		std::cout << "> Neighbors of crossroad " << currLocation << " are " << std::endl;
+		for(auto it : currMap.neighbors(currLocation))
 			std::cout << it << " ";
 		std::cout << std::endl;
 	}

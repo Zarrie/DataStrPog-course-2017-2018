@@ -5,9 +5,13 @@
 int main(int argc, char ** argv){	
 	if(argc == 2){
 		map m;
-		m.load(argv[1]);
+		if(m.load(argv[1]))
+			std::cout << "> Map loaded!" << std::endl;
+		else
+			std::cout << "!> Couldn't open file!\n";
 	}
 	else{
+		std::cout << "> Interactive mode ON!" << std::endl;
 		interactiveIterator it(argv[2]);
 		std::string command;
 		std::cin >> command;
@@ -20,9 +24,7 @@ int main(int argc, char ** argv){
 				it.change(newLocation);
 			}
 			else if(command == "neighbors"){
-				std::string currCR;
-				std::cin >> currCR;
-				it.neighbors(currCR);
+				it.neighbors();
 			}
 			else if(command == "move"){
 				std::string newLocation;

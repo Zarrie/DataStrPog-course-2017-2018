@@ -89,18 +89,17 @@ public:
 
 	map() {}
 
-	void load(const std::string &file){
+	bool load(const std::string &file){
 		std::fstream loadFile(file);
 		std::string line;
 		if (loadFile.is_open()){
-			while (std::getline(loadFile, line)){
+			while (std::getline(loadFile, line))
 				readLine(line);
-			}
 			loadFile.close();
+			return true;
 		}
-		else{
-			std::cout << "Couldn't open file!\n";
-		}
+		else
+			return false;
 	}
 
 	bool hasPath(const crossroadName &cr1, const crossroadName &cr2) const{
